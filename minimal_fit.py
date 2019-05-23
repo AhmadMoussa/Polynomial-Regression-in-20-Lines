@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def descent(x, y, epochs, step, order):
-    weights = np.zeros(order + 1)
-    d = []
+    weights, d, u = np.zeros(order + 1), [], np.linspace(min(x)-1,max(x)+1,100)
     d.append(np.ones([1,len(x)])[0])
     for i in np.arange(1, order+1):
         d.append(x ** (i))
@@ -11,17 +10,13 @@ def descent(x, y, epochs, step, order):
 
     for i in range(epochs):
         est, cost = 0, 0
-        for i in range(order + 1):
-            est += (weights[i] * (x ** i))
+        est = sum([(weights[i] * (x ** i)) for i in range(order + 1)])
         difference = est.T - y
         weights = weights + (-step * (1/len(y)) * np.matmul(difference, features))
-        for i in range(order + 1):
-            cost += ((y - (weights[i] * x ** i)) ** 2)
-        cost = ((1/(2*(len(y)))) * np.sum(cost ** 2))
+        cost = ((1/(2*(len(y)))) * np.sum(sum([((y - (weights[i] * (x ** i))) ** 2) for i in range(order + 1)]) ** 2))
 
     plt.scatter(x,y)
-    u = np.linspace(0,3,100)
     plt.plot(u, sum([(u ** i) * weights[i] for i in range(order + 1)]), 'r-')
     plt.show()
 
-descent(np.asarray([1,2,0,3]), np.asarray([0,1,2,3]), 100000, 0.001, 4)
+descent(np.random.randint(0,20,(20)), np.random.randint(0,20,(20)), 800000, 0.0000001, 3)
